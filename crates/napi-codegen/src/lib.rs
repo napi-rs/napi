@@ -78,6 +78,56 @@ impl Function {
     }
 }
 
+fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
+    let fn_ident = function.ident;
+    let extern_fn_name = format!("napi_rs_cb_{}", fn_ident.name);
+    let extern_fn_ident = Ident::from_str(extern_fn_name.as_str());
+
+    Annotatable::Item(
+        quote_item!(ecx,
+            #[no_mangle]
+            pub extern "C" fn $extern_fn_ident(
+                env: ::napi::sys::napi_env,
+                info: ::napi::sys::napi_callback_info,
+            ) -> ::napi::sys::napi_value {
+                let result: ::napi::NapiResult<::napi::sys::napi_value> =
+                    $fn_ident(env, info);
+
+                match result {
+                    Ok(value) => return value,
+                    Err(error) => {
+                        if let Some(exception) = error.exception {
+                            unsafe {
+                                ::napi::sys::napi_throw(env, exception);
+                            }
+                        } else {
+                            let message = format!("{}", &error);
+                            let c_string = std::ffi::CString::new(
+                                message,
+                            ).unwrap();
+
+                            unsafe {
+                                ::napi::sys::napi_throw_error(
+                                    env,
+                                    std::ptr::null(),
+                                    c_string.as_ptr(),
+                                );
+                            }
+                        }
+
+                        unsafe {
+                            let mut result: napi_value =
+                                std::mem::uninitialized();
+                            ::napi::sys::napi_get_undefined(env, &mut result);
+                            result
+                        }
+                    }
+                }
+            }
+        ).unwrap(),
+    )
+}
+
 pub fn napi_callback_decorator(
     ecx: &mut ExtCtxt,
     span: Span,
@@ -87,24 +137,9 @@ pub fn napi_callback_decorator(
     let js_name = get_js_name(ecx, span, meta_item);
     let function = Function::from_annotatable(ecx, &annotated);
 
-    let fn_ident = function.ident;
-    let extern_fn_name = format!("napi_rs_cb_{}", fn_ident.name);
-    let extern_fn_ident = Ident::from_str(extern_fn_name.as_str());
-
     let mut output = Vec::new();
 
-    output.push(Annotatable::Item(
-        quote_item!(ecx,
-            #[no_mangle]
-            pub extern "C" fn $extern_fn_ident(
-                env: ::napi::sys::napi_env,
-                info: ::napi::sys::napi_callback_info,
-            ) -> ::napi::sys::napi_value {
-                $fn_ident(env, info)
-            }
-        ).unwrap(),
-    ));
-
+    output.push(create_napi_callback(ecx, &function));
     output.push(annotated);
 
     output
