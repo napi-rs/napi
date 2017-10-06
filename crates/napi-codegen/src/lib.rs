@@ -121,7 +121,7 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
                         }
 
                         unsafe {
-                            let mut result: napi_value =
+                            let mut result: ::napi::sys::napi_value =
                                 std::mem::uninitialized();
                             ::napi::sys::napi_get_undefined(env, &mut result);
                             result
