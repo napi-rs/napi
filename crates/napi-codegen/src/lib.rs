@@ -102,7 +102,7 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
                 let result: NapiResult<napi_value> = $fn_ident(env, info);
 
                 match result {
-                    Ok(value) => return value,
+                    Ok(value) => value,
                     Err(error) => {
                         if let Some(exception) = error.exception {
                             unsafe {
