@@ -90,40 +90,43 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
                 env: ::napi::sys::napi_env,
                 info: ::napi::sys::napi_callback_info,
             ) -> ::napi::sys::napi_value {
-                let result: ::napi::NapiResult<::napi::sys::napi_value> =
-                    $fn_ident(env, info);
+                use std::error::Error;
+                use std::ffi::CString;
+                use std::mem;
+                use std::ptr;
+
+                use ::napi::NapiResult;
+                use ::napi::sys::{napi_get_undefined, napi_throw,
+                                  napi_throw_error, napi_value};
+
+                let result: NapiResult<napi_value> = $fn_ident(env, info);
 
                 match result {
                     Ok(value) => return value,
                     Err(error) => {
                         if let Some(exception) = error.exception {
                             unsafe {
-                                ::napi::sys::napi_throw(env, exception);
+                                napi_throw(env, exception);
                             }
                         } else {
-                            use std::error::Error;
-
                             let message = format!("{}", &error);
-                            let c_string = std::ffi::CString::new(message)
-                                .unwrap_or_else(|_| {
-                                    std::ffi::CString::new(
-                                        error.description(),
-                                    ).unwrap()
+                            let c_string =
+                                CString::new(message).unwrap_or_else(|_| {
+                                    CString::new(error.description()).unwrap()
                                 });
 
                             unsafe {
-                                ::napi::sys::napi_throw_error(
+                                napi_throw_error(
                                     env,
-                                    std::ptr::null(),
+                                    ptr::null(),
                                     c_string.as_ptr(),
                                 );
                             }
                         }
 
                         unsafe {
-                            let mut result: ::napi::sys::napi_value =
-                                std::mem::uninitialized();
-                            ::napi::sys::napi_get_undefined(env, &mut result);
+                            let mut result: napi_value = mem::uninitialized();
+                            napi_get_undefined(env, &mut result);
                             result
                         }
                     }
