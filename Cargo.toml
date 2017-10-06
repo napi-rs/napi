@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "crates/napi",
+  "crates/napi-sys",
+  "crates/napi-codegen",
+  "example",
+]

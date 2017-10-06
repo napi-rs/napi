@@ -1,0 +1,11 @@
+{
+  "name": "napi-rs-example",
+  "version": "0.0.0",
+  "scripts": {
+    "build-lib": "cargo build --release",
+    "build-addon": "node-gyp rebuild",
+    "build": "npm run -s build-lib && npm run -s build-addon"
+  },
+  "gypfile": true,
+  "private": true
+}
