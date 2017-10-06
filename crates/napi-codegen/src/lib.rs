@@ -101,10 +101,15 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
                                 ::napi::sys::napi_throw(env, exception);
                             }
                         } else {
+                            use std::error::Error;
+
                             let message = format!("{}", &error);
-                            let c_string = std::ffi::CString::new(
-                                message,
-                            ).unwrap();
+                            let c_string = std::ffi::CString::new(message)
+                                .unwrap_or_else(|_| {
+                                    std::ffi::CString::new(
+                                        error.description(),
+                                    ).unwrap()
+                                });
 
                             unsafe {
                                 ::napi::sys::napi_throw_error(
