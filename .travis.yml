@@ -7,13 +7,14 @@ cache: cargo
 env:
   global:
     - RUST_BACKTRACE=1
-    - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
 
 install:
   - cargo install cargo-update || true
   - cargo install rustfmt-nightly || true
   - cargo install clippy || true
   - cargo install-update --all
+
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
 
   - rustfmt --version
   - cargo clippy --version
