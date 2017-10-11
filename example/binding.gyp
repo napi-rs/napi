@@ -17,6 +17,10 @@
         ['OS == "win"', {
           'libraries': [
             '../../target/release/napi_example.lib',
+            'advapi32.lib',
+            'ws2_32.lib',
+            'userenv.lib',
+            'shell32.lib',
           ],
         }, {
           'libraries': [
