@@ -43,13 +43,11 @@ fn find_node_api_header() -> Result<String, &'static str> {
         .or(Err("Could not run node --version"))?
         .stdout;
 
-    let node_version = String::from_utf8(node_version_output).or(Err(
-        "Could not parse node --version output",
-    ))?;
+    let node_version = String::from_utf8(node_version_output)
+        .or(Err("Could not parse node --version output"))?;
 
-    let home_dir = env::var("USERPROFILE").or(
-        Err("Could not find user directory"),
-    )?;
+    let home_dir =
+        env::var("USERPROFILE").or(Err("Could not find user directory"))?;
 
     let mut path = PathBuf::from(home_dir);
     path.push(".node_gyp");

@@ -56,8 +56,8 @@ impl NapiErrorKind {
                 // Both situations should never happen, so just panic.
                 panic!(
                     "Either the JavaScript VM returned an unknown status code, \
-                    or NapiErrorKind::from_napi_status was called with \
-                    napi_status::napi_ok"
+                     or NapiErrorKind::from_napi_status was called with \
+                     napi_status::napi_ok"
                 );
             }
         }

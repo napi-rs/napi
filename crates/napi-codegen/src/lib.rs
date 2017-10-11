@@ -1,9 +1,9 @@
-#![crate_type="dylib"]
+#![crate_type = "dylib"]
 #![feature(plugin_registrar, rustc_private, quote)]
 
-extern crate syntax;
 extern crate rustc;
 extern crate rustc_plugin;
+extern crate syntax;
 
 use rustc_plugin::Registry;
 use syntax::ast::{FnDecl, Ident, ItemKind, LitKind, MetaItem};
@@ -58,20 +58,18 @@ impl Function {
             ecx.span_fatal(
                 span,
                 "napi_callback attribute can only be used on \
-                functions, but was applied to this item.",
+                 functions, but was applied to this item.",
             );
         };
 
         match *annotated {
-            Annotatable::Item(ref item) => {
-                match item.node {
-                    ItemKind::Fn(ref decl, ..) => Function {
-                        ident: item.ident,
-                        decl: decl.clone().unwrap(),
-                    },
-                    _ => report_error(item.span),
-                }
-            }
+            Annotatable::Item(ref item) => match item.node {
+                ItemKind::Fn(ref decl, ..) => Function {
+                    ident: item.ident,
+                    decl: decl.clone().unwrap(),
+                },
+                _ => report_error(item.span),
+            },
             Annotatable::TraitItem(ref item) => report_error(item.span),
             Annotatable::ImplItem(ref item) => report_error(item.span),
         }
