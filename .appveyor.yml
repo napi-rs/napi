@@ -28,6 +28,4 @@ test_script:
   - node --version
   - npm --version
 
-  - cargo build --all
-  - cargo test --all
   - cd example && npm run build && node example.js
