@@ -1,0 +1,23 @@
+language: rust
+
+rust: nightly
+
+cache: cargo
+
+install:
+  - cargo install rustfmt-nightly
+  - cargo install clippy
+
+script:
+  - export RUST_BACKTRACE=1
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
+
+  - rustc --version
+  - cargo --version
+  - rustfmt --version
+  - cargo clippy --version
+
+  - cargo fmt --all -- --write-mode diff
+  - cargo build --all --verbose
+  - cargo clippy --all --verbose
+  - cargo test --all --verbose
