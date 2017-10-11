@@ -1,0 +1,8 @@
+{
+  "name": "napi-rs",
+  "version": "0.0.0",
+  "scripts": {
+    "update-bindings": "./scripts/update-bindings.sh"
+  },
+  "private": true
+}
