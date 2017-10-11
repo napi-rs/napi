@@ -4,6 +4,11 @@ rust: nightly
 
 cache: cargo
 
+env:
+  global:
+    - RUST_BACKTRACE=1
+    - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
+
 install:
   - cargo install cargo-update || true
   - cargo install rustfmt-nightly || true
@@ -14,9 +19,6 @@ install:
   - cargo clippy --version
 
 script:
-  - export RUST_BACKTRACE=1
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
-
   - cargo fmt --all -- --write-mode diff
   - cargo build --all
   - cargo clippy --all
