@@ -88,21 +88,26 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
             #[no_mangle]
             pub extern "C" fn $extern_fn_ident(
                 env: ::napi::sys::napi_env,
-                info: ::napi::sys::napi_callback_info,
+                _info: ::napi::sys::napi_callback_info,
             ) -> ::napi::sys::napi_value {
                 use std::error::Error;
                 use std::ffi::CString;
                 use std::mem;
                 use std::ptr;
 
-                use ::napi::NapiResult;
+                use ::napi::{NapiEnv, NapiResult, NapiValue};
                 use ::napi::sys::{napi_get_undefined, napi_throw,
                                   napi_throw_error, napi_value};
 
-                let result: NapiResult<napi_value> = $fn_ident(env, info);
+                let env_wrapper = NapiEnv::from(env);
+
+                fn typecheck_result<T: NapiValue>(_: &NapiResult<T>) {}
+
+                let result = $fn_ident(&env_wrapper);
+                typecheck_result(&result);
 
                 match result {
-                    Ok(value) => value,
+                    Ok(value) => value.as_sys_value(),
                     Err(error) => {
                         if let Some(exception) = error.exception {
                             unsafe {

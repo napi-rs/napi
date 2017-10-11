@@ -3,22 +3,10 @@
 
 extern crate napi;
 
-use napi::NapiResult;
-use napi::sys::{napi_callback_info, napi_env, napi_value, napi_get_undefined};
-
-use std::mem;
+use napi::{NapiEnv, NapiResult, NapiUndefined};
 
 #[napi_callback("initialize")]
-fn initialize(
-    env: napi_env,
-    _info: napi_callback_info,
-) -> NapiResult<napi_value> {
+fn initialize(env: &NapiEnv) -> NapiResult<NapiUndefined> {
     println!("Hello from the Rust land!");
-
-    unsafe {
-        let mut result: napi_value = mem::uninitialized();
-        napi_get_undefined(env, &mut result);
-
-        Ok(result)
-    }
+    NapiUndefined::new(env)
 }

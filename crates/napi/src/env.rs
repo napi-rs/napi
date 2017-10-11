@@ -16,6 +16,10 @@ impl From<sys::napi_env> for NapiEnv {
 }
 
 impl NapiEnv {
+    pub fn as_sys_env(&self) -> sys::napi_env {
+        self.env
+    }
+
     pub fn handle_status(&self, status: sys::napi_status) -> NapiResult<()> {
         if status == sys::napi_status::napi_ok {
             return Ok(());

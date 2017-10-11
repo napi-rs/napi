@@ -1,10 +1,12 @@
 extern crate napi_sys;
 
-mod result;
 mod env;
+mod result;
+mod types;
 
-pub use result::{NapiError, NapiErrorKind, NapiResult};
 pub use env::NapiEnv;
+pub use result::{NapiError, NapiErrorKind, NapiResult};
+pub use types::{NapiValue, NapiUndefined};
 
 pub mod sys {
     pub use napi_sys::*;
