@@ -4,7 +4,7 @@ use std::mem;
 use sys;
 use result::{NapiError, NapiErrorKind, NapiResult};
 
-#[derive(Clone)]
+#[derive(Clone, Copy, Debug)]
 pub struct NapiEnv {
     env: sys::napi_env,
 }

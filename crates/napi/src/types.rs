@@ -8,7 +8,7 @@ pub trait NapiValue {
     fn as_sys_value(&self) -> sys::napi_value;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy, Debug)]
 pub struct NapiUndefined {
     value: sys::napi_value,
 }

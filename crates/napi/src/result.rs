@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 use sys::{napi_status, napi_value};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NapiErrorKind {
     InvalidArg,
     ObjectExpected,
