@@ -1,8 +1,11 @@
 use std::error::Error;
 use std::fmt;
 use std::fmt::Display;
+use std::ptr;
 
-use sys::{napi_status, napi_value};
+use env::NapiEnv;
+use sys::{napi_create_error, napi_create_range_error, napi_create_type_error,
+          napi_status, napi_value};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NapiErrorKind {
@@ -18,6 +21,7 @@ pub enum NapiErrorKind {
     PendingException,
     Cancelled,
     EscapeCalledTwice,
+    ApplicationError,
 }
 
 #[derive(Clone, Debug)]
@@ -81,6 +85,7 @@ impl Error for NapiError {
             NapiErrorKind::EscapeCalledTwice => {
                 "NapiError: escape called twice"
             }
+            NapiErrorKind::ApplicationError => "NapiError: application error",
         }
     }
 }
@@ -99,4 +104,36 @@ impl Display for NapiError {
                 Ok(result)
             })
     }
+}
+
+macro_rules! error_constructor {
+    ($name:ident => $napi_fn_name:ident) => {
+        pub fn $name(env: &NapiEnv, message: napi_value) -> NapiError {
+            let mut exception = ptr::null_mut();
+            let status = unsafe {
+                $napi_fn_name(
+                    env.as_sys_env(),
+                    ptr::null_mut(),
+                    message,
+                    &mut exception,
+                )
+            };
+
+            if let Err(error) = env.handle_status(status) {
+                return error;
+            }
+
+            NapiError {
+                kind: NapiErrorKind::ApplicationError,
+                message: None,
+                exception: Some(exception),
+            }
+        }
+    }
+}
+
+impl NapiError {
+    error_constructor!(error => napi_create_error);
+    error_constructor!(type_error => napi_create_type_error);
+    error_constructor!(range_error => napi_create_range_error);
 }
