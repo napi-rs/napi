@@ -144,7 +144,7 @@ pub fn napi_callback_decorator(
     meta_item: &MetaItem,
     annotated: Annotatable,
 ) -> Vec<Annotatable> {
-    let js_name = get_js_name(ecx, span, meta_item);
+    let _js_name = get_js_name(ecx, span, meta_item);
     let function = Function::from_annotatable(ecx, &annotated);
 
     let mut output = Vec::new();
