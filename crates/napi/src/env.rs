@@ -1,5 +1,5 @@
 use std::ffi::CStr;
-use std::mem;
+use std::ptr;
 
 use sys;
 use result::{NapiError, NapiErrorKind, NapiResult};
@@ -26,7 +26,7 @@ impl NapiEnv {
         }
 
         let error_message = unsafe {
-            let mut extended_error_info = mem::uninitialized();
+            let mut extended_error_info = ptr::null();
             sys::napi_get_last_error_info(self.env, &mut extended_error_info);
 
             let raw_error_message = (*extended_error_info).error_message;
@@ -64,15 +64,15 @@ impl NapiEnv {
             return None;
         }
 
+        let mut exception = ptr::null_mut();
         unsafe {
-            let mut exception = mem::uninitialized();
             sys::napi_get_and_clear_last_exception(self.env, &mut exception);
+        }
 
-            if exception.is_null() {
-                None
-            } else {
-                Some(exception)
-            }
+        if exception.is_null() {
+            None
+        } else {
+            Some(exception)
         }
     }
 }

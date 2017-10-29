@@ -1,4 +1,4 @@
-use std::mem;
+use std::ptr;
 
 use env::NapiEnv;
 use result::NapiResult;
@@ -17,11 +17,10 @@ impl NapiUndefined {
     pub fn new(env: &NapiEnv) -> NapiResult<Self> {
         let sys_env: sys::napi_env = env.as_sys_env();
 
-        let value = unsafe {
-            let mut result = mem::uninitialized();
-            let status = sys::napi_get_undefined(sys_env, &mut result);
+        let mut value = ptr::null_mut();
+        unsafe {
+            let status = sys::napi_get_undefined(sys_env, &mut value);
             env.handle_status(status)?;
-            result
         };
 
         Ok(Self { value })

@@ -90,7 +90,6 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
             ) -> ::napi::sys::napi_value {
                 use std::error::Error;
                 use std::ffi::CString;
-                use std::mem;
                 use std::ptr;
 
                 use ::napi::{NapiEnv, NapiResult, NapiValue};
@@ -127,11 +126,11 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
                             }
                         }
 
+                        let mut result: napi_value = ptr::null_mut();
                         unsafe {
-                            let mut result: napi_value = mem::uninitialized();
                             napi_get_undefined(env, &mut result);
-                            result
                         }
+                        result
                     }
                 }
             }
