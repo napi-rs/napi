@@ -72,7 +72,8 @@ impl<'a> NapiString<'a> {
             *mut U,
             usize,
             *mut usize,
-        ) -> sys::napi_status,
+        )
+            -> sys::napi_status,
     ) -> NapiResult<Vec<T>>
     where
         T: Default + Copy,

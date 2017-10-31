@@ -6,6 +6,7 @@ use sys;
 
 mod array;
 mod boolean;
+mod null;
 mod number;
 mod object;
 mod string;
@@ -13,6 +14,7 @@ mod undefined;
 
 pub use self::array::NapiArray;
 pub use self::boolean::NapiBoolean;
+pub use self::null::NapiNull;
 pub use self::number::NapiNumber;
 pub use self::object::NapiObject;
 pub use self::string::NapiString;
