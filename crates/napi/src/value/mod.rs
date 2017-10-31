@@ -140,6 +140,12 @@ pub trait NapiValue {
     }
 }
 
+pub trait AsNapiObject: NapiValue {
+    fn as_napi_object(&self) -> NapiObject {
+        NapiObject::construct(self.env(), self.as_sys_value())
+    }
+}
+
 trait NapiValueInternal<'a>: NapiValue + 'a {
     fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self;
 }

@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::{NapiValue, NapiValueInternal};
+use super::{AsNapiObject, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiString<'a> {
@@ -141,3 +141,5 @@ impl<'a> NapiValueInternal<'a> for NapiString<'a> {
         Self { env, value }
     }
 }
+
+impl<'a> AsNapiObject for NapiString<'a> {}
