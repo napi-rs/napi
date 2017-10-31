@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::NapiValue;
+use super::{NapiAny, NapiValue};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiObject<'a> {
@@ -20,6 +20,20 @@ impl<'a> NapiObject<'a> {
         })?;
 
         Ok(Self { value, env })
+    }
+
+    pub fn prototype(&self) -> NapiResult<NapiAny> {
+        let mut result = ptr::null_mut();
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_prototype(
+                self.env().as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(NapiAny::with_value(self.env(), result))
     }
 }
 

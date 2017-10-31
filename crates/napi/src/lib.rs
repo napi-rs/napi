@@ -6,8 +6,8 @@ mod value;
 
 pub use env::NapiEnv;
 pub use result::{NapiError, NapiErrorKind, NapiResult};
-pub use value::{NapiArray, NapiBoolean, NapiNull, NapiObject, NapiString,
-                NapiUndefined, NapiValue};
+pub use value::{NapiAny, NapiArray, NapiBoolean, NapiNull, NapiObject,
+                NapiString, NapiUndefined, NapiValue};
 
 pub mod sys {
     pub use napi_sys::*;

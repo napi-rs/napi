@@ -4,6 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
+mod any;
 mod array;
 mod boolean;
 mod null;
@@ -12,6 +13,7 @@ mod object;
 mod string;
 mod undefined;
 
+pub use self::any::NapiAny;
 pub use self::array::NapiArray;
 pub use self::boolean::NapiBoolean;
 pub use self::null::NapiNull;
@@ -38,6 +40,10 @@ pub trait NapiValue {
 
     fn to_napi_string(&self) -> NapiResult<NapiString> {
         coerce(self, sys::napi_coerce_to_string, self::string::construct)
+    }
+
+    fn as_any(&self) -> NapiAny {
+        NapiAny::with_value(self.env(), self.as_sys_value())
     }
 }
 
