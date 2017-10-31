@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::NapiValue;
+use super::{NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiBoolean<'a> {
@@ -58,9 +58,8 @@ impl<'a> NapiValue for NapiBoolean<'a> {
     }
 }
 
-pub fn construct<'a>(
-    value: sys::napi_value,
-    env: &'a NapiEnv,
-) -> NapiBoolean<'a> {
-    NapiBoolean { value, env }
+impl<'a> NapiValueInternal<'a> for NapiBoolean<'a> {
+    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+        Self { env, value }
+    }
 }

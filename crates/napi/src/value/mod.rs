@@ -27,24 +27,28 @@ pub trait NapiValue {
     fn env(&self) -> &NapiEnv;
 
     fn to_napi_boolean(&self) -> NapiResult<NapiBoolean> {
-        coerce(self, sys::napi_coerce_to_bool, self::boolean::construct)
+        coerce(self, sys::napi_coerce_to_bool)
     }
 
     fn to_napi_number(&self) -> NapiResult<NapiNumber> {
-        coerce(self, sys::napi_coerce_to_number, self::number::construct)
+        coerce(self, sys::napi_coerce_to_number)
     }
 
     fn to_napi_object(&self) -> NapiResult<NapiObject> {
-        coerce(self, sys::napi_coerce_to_object, self::object::construct)
+        coerce(self, sys::napi_coerce_to_object)
     }
 
     fn to_napi_string(&self) -> NapiResult<NapiString> {
-        coerce(self, sys::napi_coerce_to_string, self::string::construct)
+        coerce(self, sys::napi_coerce_to_string)
     }
 
     fn as_any(&self) -> NapiAny {
         NapiAny::with_value(self.env(), self.as_sys_value())
     }
+}
+
+trait NapiValueInternal<'a>: NapiValue + 'a {
+    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self;
 }
 
 fn coerce<'a, T, U>(
@@ -54,11 +58,10 @@ fn coerce<'a, T, U>(
         sys::napi_value,
         *mut sys::napi_value,
     ) -> sys::napi_status,
-    construct: fn(sys::napi_value, &'a NapiEnv) -> U,
 ) -> NapiResult<U>
 where
     T: NapiValue + ?Sized,
-    U: NapiValue + 'a,
+    U: NapiValueInternal<'a>,
 {
     let env = value.env();
     let mut coerced_value = ptr::null_mut();
@@ -67,5 +70,5 @@ where
         napi_fn(env.as_sys_env(), value.as_sys_value(), &mut coerced_value)
     })?;
 
-    Ok(construct(coerced_value, env))
+    Ok(U::construct(env, coerced_value))
 }
