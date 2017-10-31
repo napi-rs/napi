@@ -63,6 +63,66 @@ impl<'a> NapiString<'a> {
             env,
         })
     }
+
+    fn to_vec<T, U>(
+        &self,
+        get_value: unsafe extern "C" fn(
+            sys::napi_env,
+            sys::napi_value,
+            *mut U,
+            usize,
+            *mut usize,
+        ) -> sys::napi_status,
+    ) -> NapiResult<Vec<T>>
+    where
+        T: Default + Copy,
+        U: Copy,
+    {
+        let mut bufsize = 0;
+
+        self.env.handle_status(unsafe {
+            get_value(
+                self.env.as_sys_env(),
+                self.value,
+                ptr::null_mut(),
+                0,
+                &mut bufsize,
+            )
+        })?;
+
+        let mut buffer = vec![T::default(); bufsize + 1];
+
+        self.env.handle_status(unsafe {
+            get_value(
+                self.env.as_sys_env(),
+                self.value,
+                buffer.as_mut_ptr() as *mut U,
+                bufsize + 1,
+                ptr::null_mut(),
+            )
+        })?;
+
+        buffer.pop();
+
+        Ok(buffer)
+    }
+
+    pub fn to_bytes(&self) -> NapiResult<Vec<u8>> {
+        self.to_vec::<_, i8>(sys::napi_get_value_string_utf8)
+    }
+
+    pub fn to_latin1(&self) -> NapiResult<Vec<u8>> {
+        self.to_vec::<_, i8>(sys::napi_get_value_string_latin1)
+    }
+
+    pub fn to_utf16(&self) -> NapiResult<Vec<u16>> {
+        self.to_vec::<_, u16>(sys::napi_get_value_string_utf16)
+    }
+
+    pub fn to_string(&self) -> NapiResult<String> {
+        let bytes = self.to_bytes()?;
+        Ok(unsafe { String::from_utf8_unchecked(bytes) })
+    }
 }
 
 impl<'a> NapiValue for NapiString<'a> {
