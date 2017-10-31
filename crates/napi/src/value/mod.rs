@@ -18,45 +18,46 @@ pub use self::object::NapiObject;
 pub use self::string::NapiString;
 pub use self::undefined::NapiUndefined;
 
-fn coerce<T, U>(
-    value: &T,
-    env: &NapiEnv,
+pub trait NapiValue {
+    fn as_sys_value(&self) -> sys::napi_value;
+    fn env(&self) -> &NapiEnv;
+
+    fn to_napi_boolean(&self) -> NapiResult<NapiBoolean> {
+        coerce(self, sys::napi_coerce_to_bool, self::boolean::construct)
+    }
+
+    fn to_napi_number(&self) -> NapiResult<NapiNumber> {
+        coerce(self, sys::napi_coerce_to_number, self::number::construct)
+    }
+
+    fn to_napi_object(&self) -> NapiResult<NapiObject> {
+        coerce(self, sys::napi_coerce_to_object, self::object::construct)
+    }
+
+    fn to_napi_string(&self) -> NapiResult<NapiString> {
+        coerce(self, sys::napi_coerce_to_string, self::string::construct)
+    }
+}
+
+fn coerce<'a, T, U>(
+    value: &'a T,
     napi_fn: unsafe extern "C" fn(
         sys::napi_env,
         sys::napi_value,
         *mut sys::napi_value,
     ) -> sys::napi_status,
+    construct: fn(sys::napi_value, &'a NapiEnv) -> U,
 ) -> NapiResult<U>
 where
     T: NapiValue + ?Sized,
-    U: NapiValue,
+    U: NapiValue + 'a,
 {
+    let env = value.env();
     let mut coerced_value = ptr::null_mut();
 
     env.handle_status(unsafe {
         napi_fn(env.as_sys_env(), value.as_sys_value(), &mut coerced_value)
     })?;
 
-    Ok(U::from_sys_value(coerced_value))
-}
-
-pub trait NapiValue {
-    fn as_sys_value(&self) -> sys::napi_value;
-    fn from_sys_value(value: sys::napi_value) -> Self;
-
-    fn to_napi_boolean(&self, env: &NapiEnv) -> NapiResult<NapiBoolean> {
-        coerce(self, env, sys::napi_coerce_to_bool)
-    }
-
-    fn to_napi_number(&self, env: &NapiEnv) -> NapiResult<NapiNumber> {
-        coerce(self, env, sys::napi_coerce_to_number)
-    }
-
-    fn to_napi_object(&self, env: &NapiEnv) -> NapiResult<NapiObject> {
-        coerce(self, env, sys::napi_coerce_to_object)
-    }
-
-    fn to_napi_string(&self, env: &NapiEnv) -> NapiResult<NapiString> {
-        coerce(self, env, sys::napi_coerce_to_string)
-    }
+    Ok(construct(coerced_value, env))
 }
