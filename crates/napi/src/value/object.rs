@@ -47,13 +47,6 @@ impl<'a> NapiValue for NapiObject<'a> {
     }
 }
 
-pub fn construct<'a>(
-    value: sys::napi_value,
-    env: &'a NapiEnv,
-) -> NapiObject<'a> {
-    NapiObject { value, env }
-}
-
 impl<'a> NapiValueInternal<'a> for NapiObject<'a> {
     fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
