@@ -32,6 +32,20 @@ impl<'a> NapiBoolean<'a> {
     pub fn lie(env: &'a NapiEnv) -> NapiResult<Self> {
         NapiBoolean::new(env, false)
     }
+
+    pub fn to_bool(&self) -> NapiResult<bool> {
+        let mut result = false;
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_value_bool(
+                self.env.as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
 }
 
 impl<'a> NapiValue for NapiBoolean<'a> {
