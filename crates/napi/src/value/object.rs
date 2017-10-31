@@ -27,7 +27,7 @@ impl<'a> NapiObject<'a> {
 
         self.env.handle_status(unsafe {
             sys::napi_get_prototype(
-                self.env().as_sys_env(),
+                self.env.as_sys_env(),
                 self.value,
                 &mut result,
             )
