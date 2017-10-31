@@ -22,6 +22,19 @@ pub use self::object::NapiObject;
 pub use self::string::NapiString;
 pub use self::undefined::NapiUndefined;
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum NapiValueType {
+    Undefined,
+    Null,
+    Boolean,
+    Number,
+    String,
+    Symbol,
+    Object,
+    Function,
+    External,
+}
+
 pub trait NapiValue {
     fn as_sys_value(&self) -> sys::napi_value;
     fn env(&self) -> &NapiEnv;
@@ -44,6 +57,27 @@ pub trait NapiValue {
 
     fn as_napi_any(&self) -> NapiAny {
         NapiAny::with_value(self.env(), self.as_sys_value())
+    }
+
+    fn value_type(&self) -> NapiResult<NapiValueType> {
+        let env = self.env();
+        let mut result = sys::napi_valuetype::napi_undefined;
+
+        env.handle_status(unsafe {
+            sys::napi_typeof(env.as_sys_env(), self.as_sys_value(), &mut result)
+        })?;
+
+        Ok(match result {
+            sys::napi_valuetype::napi_undefined => NapiValueType::Undefined,
+            sys::napi_valuetype::napi_null => NapiValueType::Null,
+            sys::napi_valuetype::napi_boolean => NapiValueType::Boolean,
+            sys::napi_valuetype::napi_number => NapiValueType::Number,
+            sys::napi_valuetype::napi_string => NapiValueType::String,
+            sys::napi_valuetype::napi_symbol => NapiValueType::Symbol,
+            sys::napi_valuetype::napi_object => NapiValueType::Object,
+            sys::napi_valuetype::napi_function => NapiValueType::Function,
+            sys::napi_valuetype::napi_external => NapiValueType::External,
+        })
     }
 
     fn instanceof(&self, constructor: &NapiObject) -> NapiResult<bool> {
