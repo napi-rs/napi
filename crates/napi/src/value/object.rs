@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::{NapiAny, NapiValue, NapiValueInternal};
+use super::{NapiAny, NapiArray, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiObject<'a> {
@@ -34,6 +34,20 @@ impl<'a> NapiObject<'a> {
         })?;
 
         Ok(NapiAny::with_value(self.env(), result))
+    }
+
+    pub fn property_names(&self) -> NapiResult<NapiArray> {
+        let mut result = ptr::null_mut();
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_property_names(
+                self.env.as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(NapiArray::construct(self.env, result))
     }
 }
 

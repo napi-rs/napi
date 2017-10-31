@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::NapiValue;
+use super::{NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiArray<'a> {
@@ -57,5 +57,11 @@ impl<'a> NapiValue for NapiArray<'a> {
 
     fn env(&self) -> &NapiEnv {
         self.env
+    }
+}
+
+impl<'a> NapiValueInternal<'a> for NapiArray<'a> {
+    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+        Self { env, value }
     }
 }
