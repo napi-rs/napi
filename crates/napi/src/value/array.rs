@@ -34,6 +34,20 @@ impl<'a> NapiArray<'a> {
 
         Ok(Self { value, env })
     }
+
+    pub fn len(&self) -> NapiResult<u32> {
+        let mut result = 0;
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_array_length(
+                self.env.as_sys_env(),
+                self.as_sys_value(),
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
 }
 
 impl<'a> NapiValue for NapiArray<'a> {
