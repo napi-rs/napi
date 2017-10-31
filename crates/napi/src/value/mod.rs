@@ -42,7 +42,7 @@ pub trait NapiValue {
         coerce(self, sys::napi_coerce_to_string)
     }
 
-    fn as_any(&self) -> NapiAny {
+    fn as_napi_any(&self) -> NapiAny {
         NapiAny::with_value(self.env(), self.as_sys_value())
     }
 
