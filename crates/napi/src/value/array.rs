@@ -21,12 +21,12 @@ impl NapiArray {
         Ok(Self { value })
     }
 
-    pub fn with_length(env: &NapiEnv, length: usize) -> NapiResult<Self> {
+    pub fn with_len(env: &NapiEnv, len: usize) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_array_with_length(
                 env.as_sys_env(),
-                length,
+                len,
                 &mut value,
             )
         })?;
