@@ -85,6 +85,25 @@ pub trait NapiValue {
     fn is_dataview(&self) -> NapiResult<bool> {
         check_type(self, sys::napi_is_dataview)
     }
+
+    fn strict_equals<T>(&self, other: &T) -> NapiResult<bool>
+    where
+        T: NapiValue + ?Sized,
+    {
+        let env = self.env();
+        let mut result = false;
+
+        env.handle_status(unsafe {
+            sys::napi_strict_equals(
+                env.as_sys_env(),
+                self.as_sys_value(),
+                other.as_sys_value(),
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
 }
 
 trait NapiValueInternal<'a>: NapiValue + 'a {
