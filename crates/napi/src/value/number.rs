@@ -48,6 +48,48 @@ impl<'a> NapiNumber<'a> {
             env,
         })
     }
+
+    pub fn to_i32(&self) -> NapiResult<i32> {
+        let mut result = 0;
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_value_int32(
+                self.env.as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
+
+    pub fn to_i64(&self) -> NapiResult<i64> {
+        let mut result = 0;
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_value_int64(
+                self.env.as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
+
+    pub fn to_f64(&self) -> NapiResult<f64> {
+        let mut result = 0.0;
+
+        self.env.handle_status(unsafe {
+            sys::napi_get_value_double(
+                self.env.as_sys_env(),
+                self.value,
+                &mut result,
+            )
+        })?;
+
+        Ok(result)
+    }
 }
 
 impl<'a> NapiValue for NapiNumber<'a> {
