@@ -7,5 +7,5 @@ authors = ["Alexey Orlenko <eaglexrlnk@gmail.com>"]
 crate-type = ["staticlib"]
 
 [dependencies]
-napi = { path = "../crates/napi" }
-napi-codegen = { path = "../crates/napi-codegen" }
+napi = { path = "../napi" }
+napi-codegen = { path = "../napi-codegen" }
