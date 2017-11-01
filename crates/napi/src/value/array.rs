@@ -48,6 +48,10 @@ impl<'a> NapiArray<'a> {
 
         Ok(result)
     }
+
+    pub fn is_empty(&self) -> NapiResult<bool> {
+        self.len().map(|l| l == 0)
+    }
 }
 
 impl<'a> NapiValue for NapiArray<'a> {
