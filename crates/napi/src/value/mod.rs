@@ -172,8 +172,8 @@ where
     Ok(U::construct(env, coerced_value))
 }
 
-fn check_type<'a, T>(
-    value: &'a T,
+fn check_type<T>(
+    value: &T,
     napi_fn: unsafe extern "C" fn(sys::napi_env, sys::napi_value, *mut bool)
         -> sys::napi_status,
 ) -> NapiResult<bool>
