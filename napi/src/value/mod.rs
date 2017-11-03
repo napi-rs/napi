@@ -6,6 +6,7 @@ use sys;
 
 mod any;
 mod array;
+mod array_buffer;
 mod boolean;
 mod buffer;
 mod null;
@@ -16,6 +17,7 @@ mod undefined;
 
 pub use self::any::NapiAny;
 pub use self::array::NapiArray;
+pub use self::array_buffer::NapiArrayBuffer;
 pub use self::boolean::NapiBoolean;
 pub use self::buffer::NapiBuffer;
 pub use self::null::NapiNull;
