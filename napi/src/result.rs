@@ -6,6 +6,7 @@ use std::ptr;
 use env::NapiEnv;
 use sys::{napi_create_error, napi_create_range_error, napi_create_type_error,
           napi_status, napi_value};
+use value::{NapiString, NapiValue};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NapiErrorKind {
@@ -108,13 +109,13 @@ impl Display for NapiError {
 
 macro_rules! error_constructor {
     ($name:ident => $napi_fn_name:ident) => {
-        pub fn $name(env: &NapiEnv, message: napi_value) -> NapiError {
+        pub fn $name(env: &NapiEnv, message: &NapiString) -> NapiError {
             let mut exception = ptr::null_mut();
             let status = unsafe {
                 $napi_fn_name(
                     env.as_sys_env(),
                     ptr::null_mut(),
-                    message,
+                    message.as_sys_value(),
                     &mut exception,
                 )
             };
