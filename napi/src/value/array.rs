@@ -7,13 +7,13 @@ use sys;
 use super::{AsNapiObject, NapiAny, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiArray<'a> {
+pub struct NapiArray<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiArray<'a> {
-    pub fn new(env: &'a NapiEnv) -> NapiResult<Self> {
+impl<'env> NapiArray<'env> {
+    pub fn new(env: &'env NapiEnv) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_array(env.as_sys_env(), &mut value)
@@ -22,7 +22,7 @@ impl<'a> NapiArray<'a> {
         Ok(Self { value, env })
     }
 
-    pub fn with_len(env: &'a NapiEnv, len: usize) -> NapiResult<Self> {
+    pub fn with_len(env: &'env NapiEnv, len: usize) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_array_with_length(
@@ -53,32 +53,32 @@ impl<'a> NapiArray<'a> {
         self.len().map(|l| l == 0)
     }
 
-    pub fn get(&self, index: u32) -> NapiResult<NapiAny<'a>> {
+    pub fn get(&self, index: u32) -> NapiResult<NapiAny<'env>> {
         self.as_napi_object().get_element(index)
     }
 
     pub fn set<T>(&self, index: u32, value: &T) -> NapiResult<()>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         self.as_napi_object().set_element(index, value)
     }
 }
 
-impl<'a> NapiValue<'a> for NapiArray<'a> {
+impl<'env> NapiValue<'env> for NapiArray<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiArray<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiArray<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }
 
-impl<'a> AsNapiObject<'a> for NapiArray<'a> {}
+impl<'env> AsNapiObject<'env> for NapiArray<'env> {}

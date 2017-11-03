@@ -7,13 +7,13 @@ use sys;
 use super::{NapiAny, NapiArray, NapiString, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiObject<'a> {
+pub struct NapiObject<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiObject<'a> {
-    pub fn new(env: &'a NapiEnv) -> NapiResult<Self> {
+impl<'env> NapiObject<'env> {
+    pub fn new(env: &'env NapiEnv) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_object(env.as_sys_env(), &mut value)
@@ -36,7 +36,7 @@ impl<'a> NapiObject<'a> {
         Ok(NapiAny::with_value(self.env(), result))
     }
 
-    pub fn property_names(&self) -> NapiResult<NapiArray<'a>> {
+    pub fn property_names(&self) -> NapiResult<NapiArray<'env>> {
         let mut result = ptr::null_mut();
 
         self.env.handle_status(unsafe {
@@ -52,8 +52,8 @@ impl<'a> NapiObject<'a> {
 
     pub fn set_property<T, U>(&self, key: &T, value: &U) -> NapiResult<()>
     where
-        T: NapiValue<'a>,
-        U: NapiValue<'a>,
+        T: NapiValue<'env>,
+        U: NapiValue<'env>,
     {
         self.env.handle_status(unsafe {
             sys::napi_set_property(
@@ -65,9 +65,9 @@ impl<'a> NapiObject<'a> {
         })
     }
 
-    pub fn get_property<T>(&self, key: &T) -> NapiResult<NapiAny<'a>>
+    pub fn get_property<T>(&self, key: &T) -> NapiResult<NapiAny<'env>>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         let mut result = ptr::null_mut();
 
@@ -85,7 +85,7 @@ impl<'a> NapiObject<'a> {
 
     pub fn has_property<T>(&self, key: &T) -> NapiResult<bool>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         let mut result = false;
 
@@ -103,7 +103,7 @@ impl<'a> NapiObject<'a> {
 
     pub fn has_own_property<T>(&self, key: &T) -> NapiResult<bool>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         let mut result = false;
 
@@ -121,7 +121,7 @@ impl<'a> NapiObject<'a> {
 
     pub fn del_property<T>(&self, key: &T) -> NapiResult<bool>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         let mut result = false;
 
@@ -139,13 +139,13 @@ impl<'a> NapiObject<'a> {
 
     pub fn set_named_property<T>(&self, name: &str, value: &T) -> NapiResult<()>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         let key = NapiString::from_str(self.env, name)?;
         self.set_property(&key, value)
     }
 
-    pub fn get_named_property(&self, name: &str) -> NapiResult<NapiAny<'a>> {
+    pub fn get_named_property(&self, name: &str) -> NapiResult<NapiAny<'env>> {
         let key = NapiString::from_str(self.env, name)?;
         self.get_property(&key)
     }
@@ -162,7 +162,7 @@ impl<'a> NapiObject<'a> {
 
     pub fn set_element<T>(&self, index: u32, value: &T) -> NapiResult<()>
     where
-        T: NapiValue<'a>,
+        T: NapiValue<'env>,
     {
         self.env.handle_status(unsafe {
             sys::napi_set_element(
@@ -174,7 +174,7 @@ impl<'a> NapiObject<'a> {
         })
     }
 
-    pub fn get_element(&self, index: u32) -> NapiResult<NapiAny<'a>> {
+    pub fn get_element(&self, index: u32) -> NapiResult<NapiAny<'env>> {
         let mut result = ptr::null_mut();
 
         self.env.handle_status(unsafe {
@@ -220,18 +220,18 @@ impl<'a> NapiObject<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiObject<'a> {
+impl<'env> NapiValue<'env> for NapiObject<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiObject<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiObject<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }

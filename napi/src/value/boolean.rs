@@ -7,13 +7,13 @@ use sys;
 use super::{NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiBoolean<'a> {
+pub struct NapiBoolean<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiBoolean<'a> {
-    fn new(env: &'a NapiEnv, value: bool) -> NapiResult<Self> {
+impl<'env> NapiBoolean<'env> {
+    fn new(env: &'env NapiEnv, value: bool) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_get_boolean(env.as_sys_env(), value, &mut sys_value)
@@ -25,11 +25,11 @@ impl<'a> NapiBoolean<'a> {
         })
     }
 
-    pub fn truth(env: &'a NapiEnv) -> NapiResult<Self> {
+    pub fn truth(env: &'env NapiEnv) -> NapiResult<Self> {
         NapiBoolean::new(env, true)
     }
 
-    pub fn lie(env: &'a NapiEnv) -> NapiResult<Self> {
+    pub fn lie(env: &'env NapiEnv) -> NapiResult<Self> {
         NapiBoolean::new(env, false)
     }
 
@@ -48,18 +48,18 @@ impl<'a> NapiBoolean<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiBoolean<'a> {
+impl<'env> NapiValue<'env> for NapiBoolean<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiBoolean<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiBoolean<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }

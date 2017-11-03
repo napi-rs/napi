@@ -7,13 +7,13 @@ use sys;
 use super::{AsNapiObject, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiString<'a> {
+pub struct NapiString<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiString<'a> {
-    pub fn from_str(env: &'a NapiEnv, value: &str) -> NapiResult<Self> {
+impl<'env> NapiString<'env> {
+    pub fn from_str(env: &'env NapiEnv, value: &str) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_string_utf8(
@@ -30,7 +30,7 @@ impl<'a> NapiString<'a> {
         })
     }
 
-    pub fn from_latin1(env: &'a NapiEnv, value: &[u8]) -> NapiResult<Self> {
+    pub fn from_latin1(env: &'env NapiEnv, value: &[u8]) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_string_latin1(
@@ -47,7 +47,7 @@ impl<'a> NapiString<'a> {
         })
     }
 
-    pub fn from_utf16(env: &'a NapiEnv, value: &[u16]) -> NapiResult<Self> {
+    pub fn from_utf16(env: &'env NapiEnv, value: &[u16]) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_string_utf16(
@@ -126,20 +126,20 @@ impl<'a> NapiString<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiString<'a> {
+impl<'env> NapiValue<'env> for NapiString<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiString<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiString<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }
 
-impl<'a> AsNapiObject<'a> for NapiString<'a> {}
+impl<'env> AsNapiObject<'env> for NapiString<'env> {}

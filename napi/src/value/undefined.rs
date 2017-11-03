@@ -7,13 +7,13 @@ use sys;
 use super::{NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiUndefined<'a> {
+pub struct NapiUndefined<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiUndefined<'a> {
-    pub fn new(env: &'a NapiEnv) -> NapiResult<Self> {
+impl<'env> NapiUndefined<'env> {
+    pub fn new(env: &'env NapiEnv) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_get_undefined(env.as_sys_env(), &mut value)
@@ -23,18 +23,18 @@ impl<'a> NapiUndefined<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiUndefined<'a> {
+impl<'env> NapiValue<'env> for NapiUndefined<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiUndefined<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiUndefined<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }

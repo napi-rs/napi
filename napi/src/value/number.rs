@@ -7,13 +7,13 @@ use sys;
 use super::{NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiNumber<'a> {
+pub struct NapiNumber<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiNumber<'a> {
-    pub fn from_i32(env: &'a NapiEnv, value: i32) -> NapiResult<Self> {
+impl<'env> NapiNumber<'env> {
+    pub fn from_i32(env: &'env NapiEnv, value: i32) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_int32(env.as_sys_env(), value, &mut sys_value)
@@ -25,7 +25,7 @@ impl<'a> NapiNumber<'a> {
         })
     }
 
-    pub fn from_i64(env: &'a NapiEnv, value: i64) -> NapiResult<Self> {
+    pub fn from_i64(env: &'env NapiEnv, value: i64) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_int64(env.as_sys_env(), value, &mut sys_value)
@@ -37,7 +37,7 @@ impl<'a> NapiNumber<'a> {
         })
     }
 
-    pub fn from_f64(env: &'a NapiEnv, value: f64) -> NapiResult<Self> {
+    pub fn from_f64(env: &'env NapiEnv, value: f64) -> NapiResult<Self> {
         let mut sys_value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_create_double(env.as_sys_env(), value, &mut sys_value)
@@ -92,18 +92,18 @@ impl<'a> NapiNumber<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiNumber<'a> {
+impl<'env> NapiValue<'env> for NapiNumber<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
 
-impl<'a> NapiValueInternal<'a> for NapiNumber<'a> {
-    fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+impl<'env> NapiValueInternal<'env> for NapiNumber<'env> {
+    fn construct(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 }

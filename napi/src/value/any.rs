@@ -9,13 +9,13 @@ use super::{NapiArray, NapiBoolean, NapiNull, NapiNumber, NapiObject,
             NapiValueType};
 
 #[derive(Clone, Copy, Debug)]
-pub struct NapiAny<'a> {
+pub struct NapiAny<'env> {
     value: sys::napi_value,
-    env: &'a NapiEnv,
+    env: &'env NapiEnv,
 }
 
-impl<'a> NapiAny<'a> {
-    pub fn new(env: &'a NapiEnv) -> NapiResult<Self> {
+impl<'env> NapiAny<'env> {
+    pub fn new(env: &'env NapiEnv) -> NapiResult<Self> {
         let mut value = ptr::null_mut();
         env.handle_status(unsafe {
             sys::napi_get_undefined(env.as_sys_env(), &mut value)
@@ -24,11 +24,11 @@ impl<'a> NapiAny<'a> {
         Ok(Self { value, env })
     }
 
-    pub fn with_value(env: &'a NapiEnv, value: sys::napi_value) -> Self {
+    pub fn with_value(env: &'env NapiEnv, value: sys::napi_value) -> Self {
         Self { env, value }
     }
 
-    pub fn as_undefined(&self) -> NapiResult<NapiUndefined<'a>> {
+    pub fn as_undefined(&self) -> NapiResult<NapiUndefined<'env>> {
         match self.value_type()? {
             NapiValueType::Undefined => {
                 Ok(NapiUndefined::construct(self.env(), self.as_sys_value()))
@@ -40,7 +40,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_null(&self) -> NapiResult<NapiNull<'a>> {
+    pub fn as_null(&self) -> NapiResult<NapiNull<'env>> {
         match self.value_type()? {
             NapiValueType::Null => {
                 Ok(NapiNull::construct(self.env(), self.as_sys_value()))
@@ -52,7 +52,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_boolean(&self) -> NapiResult<NapiBoolean<'a>> {
+    pub fn as_boolean(&self) -> NapiResult<NapiBoolean<'env>> {
         match self.value_type()? {
             NapiValueType::Boolean => {
                 Ok(NapiBoolean::construct(self.env(), self.as_sys_value()))
@@ -64,7 +64,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_number(&self) -> NapiResult<NapiNumber<'a>> {
+    pub fn as_number(&self) -> NapiResult<NapiNumber<'env>> {
         match self.value_type()? {
             NapiValueType::Number => {
                 Ok(NapiNumber::construct(self.env(), self.as_sys_value()))
@@ -76,7 +76,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_string(&self) -> NapiResult<NapiString<'a>> {
+    pub fn as_string(&self) -> NapiResult<NapiString<'env>> {
         match self.value_type()? {
             NapiValueType::String => {
                 Ok(NapiString::construct(self.env(), self.as_sys_value()))
@@ -88,7 +88,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_object(&self) -> NapiResult<NapiObject<'a>> {
+    pub fn as_object(&self) -> NapiResult<NapiObject<'env>> {
         match self.value_type()? {
             NapiValueType::Object |
             NapiValueType::String |
@@ -102,7 +102,7 @@ impl<'a> NapiAny<'a> {
         }
     }
 
-    pub fn as_array(&self) -> NapiResult<NapiArray<'a>> {
+    pub fn as_array(&self) -> NapiResult<NapiArray<'env>> {
         if self.is_array()? {
             Ok(NapiArray::construct(self.env(), self.as_sys_value()))
         } else {
@@ -114,12 +114,12 @@ impl<'a> NapiAny<'a> {
     }
 }
 
-impl<'a> NapiValue<'a> for NapiAny<'a> {
+impl<'env> NapiValue<'env> for NapiAny<'env> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &'a NapiEnv {
+    fn env(&self) -> &'env NapiEnv {
         self.env
     }
 }
