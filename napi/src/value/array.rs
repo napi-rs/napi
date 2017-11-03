@@ -4,7 +4,7 @@ use env::NapiEnv;
 use result::NapiResult;
 use sys;
 
-use super::{AsNapiObject, NapiValue, NapiValueInternal};
+use super::{AsNapiObject, NapiAny, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiArray<'a> {
@@ -51,6 +51,17 @@ impl<'a> NapiArray<'a> {
 
     pub fn is_empty(&self) -> NapiResult<bool> {
         self.len().map(|l| l == 0)
+    }
+
+    pub fn get(&self, index: u32) -> NapiResult<NapiAny<'a>> {
+        self.as_napi_object().get_element(index)
+    }
+
+    pub fn set<T>(&self, index: u32, value: &T) -> NapiResult<()>
+    where
+        T: NapiValue<'a>,
+    {
+        self.as_napi_object().set_element(index, value)
     }
 }
 
