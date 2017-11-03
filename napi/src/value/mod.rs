@@ -35,27 +35,27 @@ pub enum NapiValueType {
     External,
 }
 
-pub trait NapiValue {
+pub trait NapiValue<'a> {
     fn as_sys_value(&self) -> sys::napi_value;
-    fn env(&self) -> &NapiEnv;
+    fn env(&self) -> &'a NapiEnv;
 
-    fn to_napi_boolean(&self) -> NapiResult<NapiBoolean> {
+    fn to_napi_boolean(&self) -> NapiResult<NapiBoolean<'a>> {
         coerce(self, sys::napi_coerce_to_bool)
     }
 
-    fn to_napi_number(&self) -> NapiResult<NapiNumber> {
+    fn to_napi_number(&self) -> NapiResult<NapiNumber<'a>> {
         coerce(self, sys::napi_coerce_to_number)
     }
 
-    fn to_napi_object(&self) -> NapiResult<NapiObject> {
+    fn to_napi_object(&self) -> NapiResult<NapiObject<'a>> {
         coerce(self, sys::napi_coerce_to_object)
     }
 
-    fn to_napi_string(&self) -> NapiResult<NapiString> {
+    fn to_napi_string(&self) -> NapiResult<NapiString<'a>> {
         coerce(self, sys::napi_coerce_to_string)
     }
 
-    fn as_napi_any(&self) -> NapiAny {
+    fn as_napi_any(&self) -> NapiAny<'a> {
         NapiAny::with_value(self.env(), self.as_sys_value())
     }
 
@@ -122,7 +122,7 @@ pub trait NapiValue {
 
     fn strict_equals<T>(&self, other: &T) -> NapiResult<bool>
     where
-        T: NapiValue + ?Sized,
+        T: NapiValue<'a> + ?Sized,
     {
         let env = self.env();
         let mut result = false;
@@ -140,18 +140,18 @@ pub trait NapiValue {
     }
 }
 
-pub trait AsNapiObject: NapiValue {
-    fn as_napi_object(&self) -> NapiObject {
+pub trait AsNapiObject<'a>: NapiValue<'a> {
+    fn as_napi_object(&self) -> NapiObject<'a> {
         NapiObject::construct(self.env(), self.as_sys_value())
     }
 }
 
-trait NapiValueInternal<'a>: NapiValue + 'a {
+trait NapiValueInternal<'a>: NapiValue<'a> {
     fn construct(env: &'a NapiEnv, value: sys::napi_value) -> Self;
 }
 
 fn coerce<'a, T, U>(
-    value: &'a T,
+    value: &T,
     napi_fn: unsafe extern "C" fn(
         sys::napi_env,
         sys::napi_value,
@@ -159,7 +159,7 @@ fn coerce<'a, T, U>(
     ) -> sys::napi_status,
 ) -> NapiResult<U>
 where
-    T: NapiValue + ?Sized,
+    T: NapiValue<'a> + ?Sized,
     U: NapiValueInternal<'a>,
 {
     let env = value.env();
@@ -172,13 +172,13 @@ where
     Ok(U::construct(env, coerced_value))
 }
 
-fn check_type<T>(
+fn check_type<'a, T>(
     value: &T,
     napi_fn: unsafe extern "C" fn(sys::napi_env, sys::napi_value, *mut bool)
         -> sys::napi_status,
 ) -> NapiResult<bool>
 where
-    T: NapiValue + ?Sized,
+    T: NapiValue<'a> + ?Sized,
 {
     let env = value.env();
     let mut result = false;

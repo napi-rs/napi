@@ -126,12 +126,12 @@ impl<'a> NapiString<'a> {
     }
 }
 
-impl<'a> NapiValue for NapiString<'a> {
+impl<'a> NapiValue<'a> for NapiString<'a> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &NapiEnv {
+    fn env(&self) -> &'a NapiEnv {
         self.env
     }
 }
@@ -142,4 +142,4 @@ impl<'a> NapiValueInternal<'a> for NapiString<'a> {
     }
 }
 
-impl<'a> AsNapiObject for NapiString<'a> {}
+impl<'a> AsNapiObject<'a> for NapiString<'a> {}

@@ -98,7 +98,7 @@ fn create_napi_callback(ecx: &mut ExtCtxt, function: &Function) -> Annotatable {
 
                 let env_wrapper = NapiEnv::from(env);
 
-                fn typecheck_result<T: NapiValue>(_: &NapiResult<T>) {}
+                fn typecheck_result<'a, T: NapiValue<'a>>(_: &NapiResult<T>) {}
 
                 let result = $fn_ident(&env_wrapper);
                 typecheck_result(&result);

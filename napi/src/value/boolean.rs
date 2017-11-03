@@ -48,12 +48,12 @@ impl<'a> NapiBoolean<'a> {
     }
 }
 
-impl<'a> NapiValue for NapiBoolean<'a> {
+impl<'a> NapiValue<'a> for NapiBoolean<'a> {
     fn as_sys_value(&self) -> sys::napi_value {
         self.value
     }
 
-    fn env(&self) -> &NapiEnv {
+    fn env(&self) -> &'a NapiEnv {
         self.env
     }
 }
