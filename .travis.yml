@@ -9,10 +9,8 @@ env:
     - RUST_BACKTRACE=1
 
 install:
-  - which cargo-install-update || cargo install cargo-update
-  - which rustfmt || cargo install rustfmt-nightly
-  - which cargo-clippy || cargo install clippy
-  - cargo install-update --all
+  - cargo install --force rustfmt-nightly
+  - cargo install --force clippy
 
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(rustc --print sysroot)/lib
 
