@@ -94,15 +94,19 @@ impl Error for NapiError {
 impl Display for NapiError {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{}", self.description())
-            .and_then(|result| if let Some(ref message) = self.message {
-                write!(formatter, " ({})", message)
-            } else {
-                Ok(result)
+            .and_then(|result| {
+                if let Some(ref message) = self.message {
+                    write!(formatter, " ({})", message)
+                } else {
+                    Ok(result)
+                }
             })
-            .and_then(|result| if self.exception.is_some() {
-                write!(formatter, ", JavaScript exception attached")
-            } else {
-                Ok(result)
+            .and_then(|result| {
+                if self.exception.is_some() {
+                    write!(formatter, ", JavaScript exception attached")
+                } else {
+                    Ok(result)
+                }
             })
     }
 }
