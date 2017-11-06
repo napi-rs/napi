@@ -2,6 +2,10 @@
 
 [![Build Status][travis-badge]][travis-url]
 
+High-level N-API bindings for Node.js addons written in Rust.
+
+This project is covered by a [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Crates
 
 * `napi-sys`: low-level bindings to N-API generated from
