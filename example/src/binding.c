@@ -1,5 +1,9 @@
 #include <node_api.h>
 
+#ifdef __cpluscplus
+extern "C" {
+#endif
+
 #define FUNCTIONS_MAP(V)                                                      \
   V(initialize, napi_rs_cb_initialize)
 
@@ -42,3 +46,7 @@ napi_value init_bindings(napi_env env, napi_value exports) {
 }
 
 NAPI_MODULE(NODE_GYP_MODULE_NAME, init_bindings)
+
+#ifdef __cpluscplus
+}
+#endif
