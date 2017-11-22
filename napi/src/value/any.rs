@@ -90,9 +90,9 @@ impl<'env> NapiAny<'env> {
 
     pub fn as_object(&self) -> NapiResult<NapiObject<'env>> {
         match self.value_type()? {
-            NapiValueType::Object |
-            NapiValueType::String |
-            NapiValueType::Function => {
+            NapiValueType::Object
+            | NapiValueType::String
+            | NapiValueType::Function => {
                 Ok(NapiObject::construct(self.env(), self.as_sys_value()))
             }
             _ => Err(NapiError::type_error(
