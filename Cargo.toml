@@ -1,7 +1,7 @@
 [workspace]
 members = [
   "napi",
+  "napi-derive",
   "napi-sys",
-  "napi-codegen",
   "example",
 ]

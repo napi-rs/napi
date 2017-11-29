@@ -8,4 +8,4 @@ crate-type = ["staticlib"]
 
 [dependencies]
 napi = { path = "../napi" }
-napi-codegen = { path = "../napi-codegen" }
+napi-derive = { path = "../napi-derive" }
