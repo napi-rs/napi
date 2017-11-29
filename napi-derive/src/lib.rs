@@ -81,7 +81,7 @@ fn impl_napi_args(
     };
 
     Ok(quote! {
-        impl<'env> NapiArgs<'env> for #name #gen_lifetime {
+        impl<'env> ::napi::NapiArgs<'env> for #name #gen_lifetime {
             fn from_cb_info(
                 env: & #ref_lifetime ::napi::NapiEnv,
                 cb_info: ::napi::sys::napi_callback_info,

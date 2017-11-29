@@ -3,7 +3,7 @@ extern crate napi;
 #[macro_use]
 extern crate napi_derive;
 
-use napi::{NapiArgs, NapiEnv, NapiNumber, NapiResult, NapiUndefined};
+use napi::{NapiEnv, NapiNumber, NapiResult, NapiUndefined};
 
 #[derive(NapiArgs)]
 struct HelloArgs;
