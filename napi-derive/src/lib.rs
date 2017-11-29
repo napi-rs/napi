@@ -81,7 +81,7 @@ fn impl_napi_args(
     let (gen_lifetime, ref_lifetime) = if count > 0 {
         (quote! { <'env> }, quote! { 'env })
     } else {
-        (quote!{}, quote!{})
+        (quote! {}, quote! {})
     };
 
     Ok(quote! {
