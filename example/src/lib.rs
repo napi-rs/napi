@@ -6,12 +6,9 @@ extern crate napi_derive;
 use napi::{NapiArgs, NapiEnv, NapiNumber, NapiResult, NapiUndefined};
 
 #[derive(NapiArgs)]
-struct HelloArgs<'a>(NapiUndefined<'a>);
+struct HelloArgs;
 
-fn hello<'a>(
-    env: &'a NapiEnv,
-    _: HelloArgs<'a>,
-) -> NapiResult<NapiUndefined<'a>> {
+fn hello(env: &NapiEnv, _: HelloArgs) -> NapiResult<NapiUndefined> {
     println!("Hello from the Rust land!");
     NapiUndefined::new(env)
 }

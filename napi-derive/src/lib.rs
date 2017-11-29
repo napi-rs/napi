@@ -74,10 +74,16 @@ fn impl_napi_args(
         quote! { #name }
     };
 
+    let (gen_lifetime, ref_lifetime) = if count > 0 {
+        (quote! { <'env> }, quote! { 'env })
+    } else {
+        (quote!{}, quote!{})
+    };
+
     Ok(quote! {
-        impl<'env> NapiArgs<'env> for #name<'env> {
+        impl<'env> NapiArgs<'env> for #name #gen_lifetime {
             fn from_cb_info(
-                env: &'env ::napi::NapiEnv,
+                env: & #ref_lifetime ::napi::NapiEnv,
                 cb_info: ::napi::sys::napi_callback_info,
             ) -> ::napi::NapiResult<Self> {
                 use ::napi::sys;
