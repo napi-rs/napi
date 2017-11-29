@@ -26,7 +26,7 @@ fn impl_napi_args(
         _ => return Err("NapiArgs can only be derived for structs"),
     };
 
-    let (init_list, count) = match *variant_data {
+    let (init_list, count, imports) = match *variant_data {
         syn::VariantData::Struct(ref fields) => {
             let inner = fields
                 .iter()
@@ -46,7 +46,11 @@ fn impl_napi_args(
                 { #(#inner),* }
             };
 
-            (Some(outer), fields.len())
+            let imports = quote! {
+                use ::napi::NapiValue;
+            };
+
+            (Some(outer), fields.len(), imports)
         }
 
         syn::VariantData::Tuple(ref fields) => {
@@ -62,10 +66,10 @@ fn impl_napi_args(
                 ( #(#inner),* )
             };
 
-            (Some(outer), fields.len())
+            (Some(outer), fields.len(), quote! {})
         }
 
-        syn::VariantData::Unit => (None, 0),
+        syn::VariantData::Unit => (None, 0, quote! {}),
     };
 
     let construct = if let Some(init_list) = init_list {
@@ -87,9 +91,11 @@ fn impl_napi_args(
                 cb_info: ::napi::sys::napi_callback_info,
             ) -> ::napi::NapiResult<Self> {
                 use ::napi::sys;
-                use ::napi::{NapiError, NapiString, NapiValue};
+                use ::napi::{NapiError, NapiString};
 
                 use ::std::ptr;
+
+                #imports
 
                 let mut argc = #count;
                 let mut argv = [ptr::null_mut(); #count];
