@@ -12,14 +12,9 @@ This project is covered by a [Code of Conduct](CODE_OF_CONDUCT.md).
   [`node_api.h`](https://github.com/nodejs/node/blob/master/src/node_api.h)
   using [`bindgen`](https://github.com/rust-lang-nursery/rust-bindgen).
 * `napi`: high-level and rusty wrappers around `napi-sys`.
-* `napi-codegen`: a compiler plugin designed for you to be able to write a
-  regular Rust function that takes JavaScript values as arguments and returns a
-  `NapiResult`, put an annotation, and be good to go.  It's not clear at this
-  point whether we will continue taking this route, though.  On the second
-  thought, pretty function signatures don't seem worth diving into the hassle
-  of maintaining compatibility with the latest nightly compiler and requiring
-  using it.  Good old macros and just a little bit of boilerplate code will
-  solve the problem as well.
+* `napi-derive`: contains a procedural macro that allows to construct typesafe
+   structures that represent function parameters from JavaScript function call
+   arguments and automatically validate them.
 
 [travis-badge]: https://travis-ci.org/aqrln/napi-rs.svg?branch=master
 [travis-url]: https://travis-ci.org/aqrln/napi-rs
