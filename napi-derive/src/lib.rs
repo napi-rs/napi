@@ -26,20 +26,62 @@ fn impl_napi_args(
         _ => return Err("NapiArgs can only be derived for structs"),
     };
 
-    let fields = match variant_data {
-        &syn::VariantData::Tuple(ref fields) => fields,
-        _ => return Err("NapiArgs can only be derived for tuple-structs"),
+    let (init_list, count) = match *variant_data {
+        syn::VariantData::Struct(ref fields) => {
+            let inner = fields
+                .iter()
+                .enumerate()
+                .map(|(idx, field)| {
+                    let ident = field.clone().ident.unwrap();
+                    quote! {
+                        #ident: <_ as NapiValue>::from_sys_checked(
+                            env,
+                            argv[#idx],
+                        )?
+                    }
+                })
+                .collect::<Vec<_>>();
+
+            let outer = quote! {
+                { #(#inner),* }
+            };
+
+            (Some(outer), fields.len())
+        }
+
+        syn::VariantData::Tuple(ref fields) => {
+            let inner = (0..fields.len())
+                .map(|idx| {
+                    quote! {
+                        <_ as NapiValue>::from_sys_checked(env, argv[#idx])?
+                    }
+                })
+                .collect::<Vec<_>>();
+
+            let outer = quote! {
+                ( #(#inner),* )
+            };
+
+            (Some(outer), fields.len())
+        }
+
+        syn::VariantData::Unit => (None, 0),
     };
-    let count = fields.len();
+
+    let construct = if let Some(init_list) = init_list {
+        quote! { #name #init_list }
+    } else {
+        quote! { #name }
+    };
 
     Ok(quote! {
-        impl NapiArgs for #name {
+        impl<'env> NapiArgs<'env> for #name<'env> {
             fn from_cb_info(
-                env: &::napi::NapiEnv,
+                env: &'env ::napi::NapiEnv,
                 cb_info: ::napi::sys::napi_callback_info,
             ) -> ::napi::NapiResult<Self> {
                 use ::napi::sys;
-                use ::napi::{NapiError, NapiString};
+                use ::napi::{NapiError, NapiString, NapiValue};
 
                 use ::std::ptr;
 
@@ -66,7 +108,7 @@ fn impl_napi_args(
                     return Err(NapiError::type_error(env, &message));
                 }
 
-                Ok(#name())
+                Ok(#construct)
             }
         }
     })

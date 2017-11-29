@@ -39,9 +39,13 @@ pub enum NapiValueType {
     External,
 }
 
-pub trait NapiValue<'env> {
+pub trait NapiValue<'env>: Sized {
     fn as_sys_value(&self) -> sys::napi_value;
     fn env(&self) -> &'env NapiEnv;
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self>;
 
     fn to_napi_boolean(&self) -> NapiResult<NapiBoolean<'env>> {
         coerce(self, sys::napi_coerce_to_bool)

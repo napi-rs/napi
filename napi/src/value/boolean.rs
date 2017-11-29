@@ -1,10 +1,10 @@
 use std::ptr;
 
 use env::NapiEnv;
-use result::NapiResult;
+use result::{NapiError, NapiResult};
 use sys;
 
-use super::{NapiValue, NapiValueInternal};
+use super::{NapiAny, NapiString, NapiValue, NapiValueInternal, NapiValueType};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiBoolean<'env> {
@@ -55,6 +55,20 @@ impl<'env> NapiValue<'env> for NapiBoolean<'env> {
 
     fn env(&self) -> &'env NapiEnv {
         self.env
+    }
+
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self> {
+        if NapiAny::with_value(env, value).value_type()?
+            != NapiValueType::Boolean
+        {
+            let message = NapiString::from_str(env, "Boolean expected")?;
+            return Err(NapiError::type_error(env, &message));
+        }
+
+        Ok(Self { env, value })
     }
 }
 

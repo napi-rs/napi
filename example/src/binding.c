@@ -1,7 +1,8 @@
 #include <node_api.h>
 
 #define FUNCTIONS_MAP(V)                                                      \
-  V(initialize, example_initialize)
+  V(hello, example_hello)                                                     \
+  V(add, example_add)
 
 #define V(name, func)                                                         \
   extern napi_value func(napi_env env, napi_callback_info info);

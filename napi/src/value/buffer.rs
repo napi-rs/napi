@@ -2,10 +2,10 @@ use std::ptr;
 use std::slice;
 
 use env::NapiEnv;
-use result::NapiResult;
+use result::{NapiError, NapiResult};
 use sys;
 
-use super::{AsNapiObject, NapiValue};
+use super::{AsNapiObject, NapiAny, NapiString, NapiValue};
 
 #[derive(Debug)]
 pub struct NapiBuffer<'env, 'buf> {
@@ -51,6 +51,34 @@ impl<'env, 'buf> NapiValue<'env> for NapiBuffer<'env, 'buf> {
 
     fn env(&self) -> &'env NapiEnv {
         self.env
+    }
+
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self> {
+        if !NapiAny::with_value(env, value).is_buffer()? {
+            let message = NapiString::from_str(env, "Buffer expected")?;
+            return Err(NapiError::type_error(env, &message));
+        }
+
+        let mut data = ptr::null_mut();
+        let mut len = 0;
+
+        env.handle_status(unsafe {
+            sys::napi_get_buffer_info(
+                env.as_sys_env(),
+                value,
+                &mut data,
+                &mut len,
+            )
+        })?;
+
+        Ok(Self {
+            env,
+            value,
+            data: unsafe { slice::from_raw_parts_mut(data as *mut u8, len) },
+        })
     }
 }
 

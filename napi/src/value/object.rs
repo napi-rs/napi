@@ -1,10 +1,11 @@
 use std::ptr;
 
 use env::NapiEnv;
-use result::NapiResult;
+use result::{NapiError, NapiResult};
 use sys;
 
-use super::{NapiAny, NapiArray, NapiString, NapiValue, NapiValueInternal};
+use super::{NapiAny, NapiArray, NapiString, NapiValue, NapiValueInternal,
+            NapiValueType};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiObject<'env> {
@@ -227,6 +228,20 @@ impl<'env> NapiValue<'env> for NapiObject<'env> {
 
     fn env(&self) -> &'env NapiEnv {
         self.env
+    }
+
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self> {
+        if NapiAny::with_value(env, value).value_type()?
+            != NapiValueType::Object
+        {
+            let message = NapiString::from_str(env, "Object expected")?;
+            return Err(NapiError::type_error(env, &message));
+        }
+
+        Ok(Self { env, value })
     }
 }
 

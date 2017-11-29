@@ -1,10 +1,10 @@
 use std::ptr;
 
 use env::NapiEnv;
-use result::NapiResult;
+use result::{NapiError, NapiResult};
 use sys;
 
-use super::{AsNapiObject, NapiAny, NapiValue, NapiValueInternal};
+use super::{AsNapiObject, NapiAny, NapiString, NapiValue, NapiValueInternal};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NapiArray<'env> {
@@ -72,6 +72,18 @@ impl<'env> NapiValue<'env> for NapiArray<'env> {
 
     fn env(&self) -> &'env NapiEnv {
         self.env
+    }
+
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self> {
+        if !NapiAny::with_value(env, value).is_array()? {
+            let message = NapiString::from_str(env, "Array expected")?;
+            return Err(NapiError::type_error(env, &message));
+        }
+
+        Ok(Self { env, value })
     }
 }
 

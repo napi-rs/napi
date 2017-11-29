@@ -9,8 +9,8 @@ pub use args::NapiArgs;
 pub use env::NapiEnv;
 pub use result::{NapiError, NapiErrorKind, NapiResult};
 pub use value::{AsNapiObject, NapiAny, NapiArray, NapiArrayBuffer,
-                NapiBoolean, NapiBuffer, NapiNull, NapiObject, NapiString,
-                NapiUndefined, NapiValue, NapiValueType};
+                NapiBoolean, NapiBuffer, NapiNull, NapiNumber, NapiObject,
+                NapiString, NapiUndefined, NapiValue, NapiValueType};
 
 pub mod sys {
     pub use napi_sys::*;

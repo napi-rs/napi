@@ -122,4 +122,11 @@ impl<'env> NapiValue<'env> for NapiAny<'env> {
     fn env(&self) -> &'env NapiEnv {
         self.env
     }
+
+    fn from_sys_checked(
+        env: &'env NapiEnv,
+        value: sys::napi_value,
+    ) -> NapiResult<Self> {
+        Ok(Self { env, value })
+    }
 }

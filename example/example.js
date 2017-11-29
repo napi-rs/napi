@@ -2,4 +2,5 @@
 
 const addon = require('./build/Release/example.node');
 
-addon.initialize();
+addon.hello(undefined);
+console.log(addon.add(1, 2));
