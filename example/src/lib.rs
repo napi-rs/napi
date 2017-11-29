@@ -8,7 +8,7 @@ use napi::{NapiArgs, NapiEnv, NapiNumber, NapiResult, NapiUndefined};
 #[derive(NapiArgs)]
 struct HelloArgs;
 
-fn hello(env: &NapiEnv, _: HelloArgs) -> NapiResult<NapiUndefined> {
+fn hello<'a>(env: &'a NapiEnv, _: &HelloArgs) -> NapiResult<NapiUndefined<'a>> {
     println!("Hello from the Rust land!");
     NapiUndefined::new(env)
 }
@@ -19,7 +19,7 @@ struct AddArgs<'a> {
     second: NapiNumber<'a>,
 }
 
-fn add<'a>(env: &'a NapiEnv, args: AddArgs<'a>) -> NapiResult<NapiNumber<'a>> {
+fn add<'a>(env: &'a NapiEnv, args: &AddArgs<'a>) -> NapiResult<NapiNumber<'a>> {
     let first = args.first.to_i32()?;
     let second = args.second.to_i32()?;
     NapiNumber::from_i32(env, first + second)

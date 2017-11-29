@@ -38,7 +38,7 @@ macro_rules! napi_callback {
 
             let result = <_ as NapiArgs>::from_cb_info(&env_wrapper, cb_info)
                 .and_then(|args| {
-                    let result = $handler(&env_wrapper, args);
+                    let result = $handler(&env_wrapper, &args);
                     typecheck_result(&result);
                     result
                 });
