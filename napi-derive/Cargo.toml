@@ -6,7 +6,7 @@ license = "MIT"
 description = "#[derive(NapiArgs)] for napi crate"
 repository = "https://github.com/aqrln/napi-rs"
 readme = "README.md"
-keywords = ["node.js", "n-api", "addons", "bindings"]
+keywords = ["node", "nodejs", "n-api", "addons", "bindings"]
 categories = ["api-bindings", "development-tools::ffi"]
 
 [badges]
