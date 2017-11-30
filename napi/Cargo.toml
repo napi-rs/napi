@@ -1,7 +1,21 @@
 [package]
 name = "napi"
 version = "0.1.0"
-authors = ["Alexey Orlenko <eaglexrlnk@gmail.com>"]
+authors = [
+  "Alexey Orlenko <eaglexrlnk@gmail.com>",
+  "Dmytro Nechai <nechaido@gmail.com>",
+]
+license = "MIT"
+description = "High-level bindings to Node.js N-API"
+repository = "https://github.com/aqrln/napi-rs"
+readme = "README.md"
+keywords = ["node.js", "n-api", "addons", "bindings"]
+categories = ["api-bindings"]
+
+[badges]
+travis-ci = { repository = "aqrln/napi-rs" }
+appveyor = { repository = "aqrln/napi-rs" }
+maintenance = { status = "experimental" }
 
 [dependencies]
-napi-sys = { path = "../napi-sys" }
+napi-sys = { version = "0.1.0", path = "../napi-sys" }

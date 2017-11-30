@@ -2,6 +2,7 @@
 name = "napi-example"
 version = "0.1.0"
 authors = ["Alexey Orlenko <eaglexrlnk@gmail.com>"]
+publish = false
 
 [lib]
 crate-type = ["staticlib"]

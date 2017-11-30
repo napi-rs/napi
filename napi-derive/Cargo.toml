@@ -1,7 +1,18 @@
 [package]
-authors = ["Alexey Orlenko <eaglexrlnk@gmail.com>"]
 name = "napi-derive"
 version = "0.1.0"
+authors = ["Alexey Orlenko <eaglexrlnk@gmail.com>"]
+license = "MIT"
+description = "#[derive(NapiArgs)] for napi crate"
+repository = "https://github.com/aqrln/napi-rs"
+readme = "README.md"
+keywords = ["node.js", "n-api", "addons", "bindings"]
+categories = ["api-bindings", "development-tools::ffi"]
+
+[badges]
+travis-ci = { repository = "aqrln/napi-rs" }
+appveyor = { repository = "aqrln/napi-rs" }
+maintenance = { status = "experimental" }
 
 [dependencies]
 quote = "0.3.15"
