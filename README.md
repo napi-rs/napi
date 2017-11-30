@@ -24,7 +24,8 @@ The project is covered by a [Code of Conduct][coc].
 ## Example
 
 Check out <https://github.com/aqrln/napi-rs/tree/master/example> to see the
-full source code and project structure of this example.
+full source code and project structure of this example. (TODO: initialize the
+module from Rust too).
 
 ### `lib.rs`
 
