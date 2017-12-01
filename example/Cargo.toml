@@ -8,5 +8,5 @@ publish = false
 crate-type = ["staticlib"]
 
 [dependencies]
-napi = { path = "../napi" }
-napi-derive = { path = "../napi-derive" }
+napi = { version = "0.1.1", path = "../napi" }
+napi-derive = { version = "0.1.1", path = "../napi-derive" }

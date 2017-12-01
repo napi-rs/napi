@@ -1,6 +1,7 @@
 # Node.js N-API for Rust! [work in progress]
 
-[![Build Status][travis-badge]][travis-url]
+[![Travis Build Status][travis-badge]][travis-url]
+[![AppVeyor Build Status][appveyor-badge]][appveyor-url]
 
 High-level N-API bindings for Node.js addons written in Rust.
 
@@ -23,9 +24,8 @@ The project is covered by a [Code of Conduct][coc].
 
 ## Example
 
-Check out <https://github.com/aqrln/napi-rs/tree/master/example> to see the
-full source code and project structure of this example. (TODO: initialize the
-module from Rust too).
+Check out the [`example`][example] directory to see the full source code and
+project structure of this example. (TODO: initialize the module from Rust too).
 
 ### `lib.rs`
 
@@ -72,9 +72,12 @@ addon.hello();
 console.log(addon.add(1, 2));
 ```
 
-[coc]: https://github.com/aqrln/napi-rs/blob/master/CODE_OF_CONDUCT.md
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/9t6ckakvfmn07ru6/branch/master?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/aqrln/napi-rs
+[coc]: https://github.com/napi-rs/napi/blob/master/CODE_OF_CONDUCT.md
+[example]: https://github.com/napi-rs/napi/tree/master/example
 [napi]: https://crates.io/crates/napi
 [napi-derive]: https://crates.io/crates/napi-derive
 [napi-sys]: https://crates.io/crates/napi-sys
-[travis-badge]: https://travis-ci.org/aqrln/napi-rs.svg?branch=master
-[travis-url]: https://travis-ci.org/aqrln/napi-rs
+[travis-badge]: https://travis-ci.org/napi-rs/napi.svg?branch=master
+[travis-url]: https://travis-ci.org/napi-rs/napi
